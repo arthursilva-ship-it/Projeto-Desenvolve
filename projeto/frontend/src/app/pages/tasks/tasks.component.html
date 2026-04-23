@@ -1,0 +1,64 @@
+<div class="page-center">
+  <mat-card class="tasks-card">
+
+    <!-- Com carinho no fluxo, este cabecalho mostra titulo e acao de logout. -->
+    <mat-toolbar color="primary" style="border-radius: 4px 4px 0 0">
+      <mat-icon style="margin-right: 8px">check_circle</mat-icon>
+      <span>Minhas Tarefas</span>
+      <span style="flex:1"></span>
+      <button mat-icon-button (click)="logout()" matTooltip="Sair">
+        <mat-icon>logout</mat-icon>
+      </button>
+    </mat-toolbar>
+
+    <mat-card-content class="card-content">
+
+      <!-- Com foco em produtividade, este bloco cria uma nova tarefa com validacao. -->
+      <div style="display:flex; gap:8px; align-items:flex-start">
+        <mat-form-field style="flex:1" appearance="outline">
+          <mat-label>Nova tarefa</mat-label>
+          <input
+            matInput
+            [formControl]="titleControl"
+            placeholder="Ex.: Finalizar relatório"
+            (keyup.enter)="add()"
+          >
+          <mat-error *ngIf="titleControl.hasError('required')">Título obrigatório.</mat-error>
+          <mat-error *ngIf="titleControl.hasError('minlength')">Mínimo 2 caracteres.</mat-error>
+        </mat-form-field>
+
+        <button
+          mat-flat-button
+          color="primary"
+          [disabled]="creating"
+          (click)="add()"
+          style="margin-top:4px; height:56px"
+        >
+          <mat-icon>add</mat-icon>
+          {{ creating ? '...' : 'Adicionar' }}
+        </button>
+      </div>
+
+      <!-- Com feedback visual, o spinner indica carregamento de dados da API. -->
+      <div *ngIf="loading" style="text-align:center; padding:16px">
+        <mat-spinner diameter="36" style="margin:auto"></mat-spinner>
+      </div>
+
+      <!-- Com contexto gentil, este estado orienta quando ainda nao existem tarefas. -->
+      <div *ngIf="!loading && tasks.length === 0" class="empty-state">
+        <mat-icon style="font-size:48px; width:48px; height:48px; color:#cbd5e1">inbox</mat-icon>
+        <p>Nenhuma tarefa ainda. Crie a primeira acima.</p>
+      </div>
+
+      <!-- Com organizacao, aqui renderizamos cada tarefa da lista retornada pelo backend. -->
+      <div class="task-list">
+        <app-task
+          *ngFor="let t of tasks"
+          [task]="t"
+          (remove)="delete($event)"
+        ></app-task>
+      </div>
+
+    </mat-card-content>
+  </mat-card>
+</div>
